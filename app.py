@@ -4,7 +4,7 @@ import google.generativeai as genai
 app = Flask(__name__)
 
 # Gemini API Key (Replace with your own API Key)
-genai.configure(api_key="AIzaSyC99R1OssC4kyL16IDCYzTyHq87A0KThUM")
+genai.configure(api_key="AIzaSyAiaHQLk6jhZDR5HJ8PI9M1XWVncAh-Z_o")
 
 # Initialize Speech Recognition
 model = genai.GenerativeModel("gemini-1.5-flash")
