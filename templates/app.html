@@ -1,201 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mock Interview</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-        .container {
-            width: 60%;
-            margin: 50px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .form-group {
-            margin: 15px 0;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .question-container, .answer-container {
-            margin-top: 30px;
-        }
-        .question-container p, .answer-container p {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .feedback {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #45d54a4d;
-            color: #721c24;
-            border-radius: 4px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: rgba(192, 241, 244, 0.23);
+      }
+      
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      
+      .container {
+        width: 100%;
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      h1,
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+      .form-group {
+        display: inline-block;
+        justify-content: space-between;
+        margin: 15px 0;
+      }
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #45a049;
+      }
+      .answer-container {
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .question-container,
+      .answer-container {
+        text-align: center;
+        margin-top: 30px;
+      }
+      
+      .question-container p,
+      .answer-container p {
+        font-size: 18px;
+        margin: 10px 0;
+      }
+      
+      .feedback {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #45d54a4d;
+        color: #721c24;
+        border-radius: 4px;
+      }
+      
+      .start-btn {
+        padding: 12px 24px;
+        font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+      }
+      
+      .start-btn:hover {
+        background-color: #0056b3;
+      }
+      
+      .video-container {
+        width: 320px;
+        height: 57%;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px;
+        text-align: center;
+        align-items: center;
+        transition: all 0.5s ease-in-out;
+      }
+      
+      .video-container video {
+        width: 100%;
+        border-radius: 8px;
+      }
+      
+      .continue-btn {
+        margin-top: 10px;
+        padding: 8px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        border-radius: 5px;
+      }
+      
+      .continue-btn:hover {
+        background-color: #218838;
+      }
+      
+      .move-top-right {
+        transform: scale(0.4) translate(10vw, -20vh);
+        top: 4%;
+        right: 0px;
+        left: auto;
+      }
+      #questionText {
+        font-size: 50px;
+        max-width: 1000px;
+        margin: auto;
+        border: 1px solid;
+        height: 45vh;
+        border-radius: 20px;
+        overflow-y: scroll;
+        background: white;
+        box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+      }
+      
+      .course-choice {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        flex-direction: column;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="heading">
+      <h1>Mock Interview</h1>
+      <h2>Prepare Like a Pro, Succeed Like a Star!</h2>
+    </div>
+
+    <div class="course-choice">
+      <div>
+        <div class="form-group" id="form-group">
+          <label for="course">Course</label>
+          <select id="course">
+            <option value="Data Science">Data Science</option>
+            <option value="Software Testing">Software Testing</option>
+            <option value="Full Stack">Full Stack</option>
+            <option value="Python">Python</option>
+            <option value="Java">Java</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+            <option value="MERN Stack">MERN Stack</option>
+            <option value="MEAN Stack">MEAN Stack</option>
+            <option value="Business Analyst">Business Analyst</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="form-group">
+          <label for="level" id="form-group">Level</label>
+          <select id="level">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <button class="start-btn" id="start" style="display: block;" onclick="startVideo()">Start Interview</button>
+      </div>
+    </div>
     <div class="container">
-        <h1>Mock Interview</h1>
+      <div class="video-container" id="videoContainer">
+        <div style="display: flex; flex-direction: column; justify-content: center; ">
+          <div>
+            <video id="cameraFeed" autoplay></video>
+          </div>
+          <div>
+            <button class="continue-btn" id="getQuestion" style="display: none;" onclick="moveVideo()">Get Question</button>
+          </div>
+        </div>
+      </div>
 
+      <div class="question-container">
+        <div id="loader" style="display: none;">Loading...</div>
+        <p id="questionText" style="display: none;"></p>
+      </div>
+
+      <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
+        <button id="checkAnswer" style="display: none">Check Answer</button>
+        <p id="speakInstruction" style="display: none; font-weight: bold; color: red;"></p>
+      </div>
+
+      <div class="answer-container" id="anser" style="display: none;">
         <div class="form-group">
-            <label for="course">Course</label>
-            <select id="course">
-                <option value="Data Science">Data Science</option>
-                <option value="Software Testing">Software Testing</option>
-                <option value="Full Stack">Full Stack</option>
-                <option value="Python">Python</option>
-                <option value="Java">Java</option>
-                <option value="Digital Marketing">Digital Marketing</option>
-                <option value="MERN Stack">MERN Stack</option>
-                <option value="MEAN Stack">MEAN Stack</option>
-                <option value="Business Analyst">Business Analyst</option>
-            </select>
+          <p></p>
+          <label for="userAnswer">Your Answer</label>
+          <input type="text" id="userAnswer" placeholder="Enter your answer here" />
         </div>
 
-        <div class="form-group">
-            <label for="level">Level</label>
-            <select id="level">
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-            </select>
-        </div>
+        <button id="nextQuestion">Next Question</button>
+      </div>
 
-        <button id="getQuestion">Get Question</button>
-
-        <div class="question-container">
-            <p id="questionText"></p>
-        </div>
-        <button id="checkAnswer">click to Record your Answer</button>
-        
-
-        <div class="answer-container">
-            <div class="form-group">
-                <label for="userAnswer">Your Answer</label>
-                <input type="text" id="userAnswer" placeholder="Enter your answer here">
-            </div>
-            
-            <button id="nextQuestion">Next Question</button>
-        </div>
-
-        <div id="feedback" class="feedback" style="display:none;"></div>
+      <div id="feedback" class="feedback" style="display:none;"></div>
     </div>
 
     <script>
-        
-        // Speech Recognition Setup
-        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        // Speech Synthesis Setup (Female Voice)
-        const synth = window.speechSynthesis;
-        const voices = synth.getVoices();
-        let femaleVoice = voices.find(voice => voice.name.includes('female')) || voices[0];
-
-        function speakText(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.voice = femaleVoice;
-            synth.speak(utterance);
-        }
-
-        document.getElementById("getQuestion").addEventListener("click", function() {
-            const course = document.getElementById("course").value;
-            const level = document.getElementById("level").value;
-            
-            fetch("/quiz", {
-                method: "POST",
+      function startVideo() {
+        const videoContainer = document.getElementById('videoContainer')
+        const cameraFeed = document.getElementById('cameraFeed')
+        document.getElementById('form-group').style.display = 'none'
+        document.getElementById('level').style.display = 'none'
+        document.getElementById('start').style.display = 'none'
+        document.getElementById('heading').style.display = 'none'
+        document.getElementById('getQuestion').style.display = 'block'
+      
+        navigator.mediaDevices
+          .getUserMedia({ video: true })
+          .then((stream) => {
+            cameraFeed.srcObject = stream
+            videoContainer.style.display = 'block' // Show the card
+          })
+          .catch((error) => {
+            console.error('Error accessing the camera:', error)
+          })
+      }
+      
+      function moveVideo() {
+        document.getElementById('videoContainer').classList.add('move-top-right')
+      
+        // Delay showing 'checkAnswer' by 2 seconds (2000ms)
+        setTimeout(() => {
+          document.getElementById('checkAnswer').style.display = 'block'
+          document.getElementById('anser').style.display = 'block'
+          document.getElementById('questionText').style.display = 'block'
+        }, 2000)
+      }
+      
+      // Speech Recognition Setup
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)()
+      recognition.lang = 'en-US'
+      recognition.interimResults = false
+      recognition.maxAlternatives = 1
+      
+      // Speech Synthesis Setup (Female Voice)
+      const synth = window.speechSynthesis
+      const voices = synth.getVoices()
+      let femaleVoice = voices.find((voice) => voice.name.includes('female')) || voices[0]
+      
+      function speakText(text) {
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.voice = femaleVoice
+        synth.speak(utterance)
+      }
+      
+      document.getElementById('nextQuestion').addEventListener('click', function () {
+        // Stop speech synthesis before moving to the next question
+        synth.cancel()
+      
+        // Clear user input field
+        document.getElementById('userAnswer').value = ''
+      
+        // Hide feedback message when moving to the next question
+        document.getElementById('feedback').textContent = ''
+        document.getElementById('feedback').style.display = 'none'
+      })
+      
+      document.getElementById('getQuestion').addEventListener('click', function () {
+        const course = document.getElementById('course').value
+        const level = document.getElementById('level').value
+        const loader = document.getElementById('loader') // Get the loader element
+        const questionText = document.getElementById('questionText') // Question display element
+        const nextQuestionBtn = document.getElementById('nextQuestion') // Next button
+      
+        // Show loader and clear previous question
+        loader.style.display = 'block'
+        questionText.textContent = ''
+        nextQuestionBtn.style.display = 'none' // Hide next button initially
+      
+        fetch('/quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ course: course, level: level })
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            loader.style.display = 'none' // Hide loader after fetching
+            const questions = data.questions
+            let questionIndex = 0
+      
+            function showNextQuestion() {
+              if (questionIndex < questions.length) {
+                questionText.textContent = questions[questionIndex]
+                speakText(questions[questionIndex])
+                questionIndex++
+              } else {
+                questionText.textContent = 'No more questions.'
+                nextQuestionBtn.style.display = 'none' // Hide button when no more questions
+              }
+            }
+      
+            showNextQuestion()
+            nextQuestionBtn.style.display = 'block' // Show next button
+            nextQuestionBtn.addEventListener('click', showNextQuestion)
+          })
+          .catch((error) => {
+            loader.style.display = 'none' // Hide loader on error
+            questionText.textContent = 'Failed to load question.'
+            console.error('Error fetching questions:', error)
+          })
+      })
+      
+      document.getElementById('checkAnswer').addEventListener('click', function () {
+        const speakInstruction = document.getElementById('speakInstruction');
+        speakInstruction.textContent = 'Please speak your answer...';
+        speakInstruction.style.display = 'block';
+    
+        // Speak the instruction aloud
+        speakText('Please speak your answer');
+    
+        // Start speech recognition
+        recognition.continuous = false; // Ensure it stops after one result
+        recognition.interimResults = false; // Get only final result
+        recognition.start();
+    
+        recognition.onresult = function (event) {
+            const userAnswer = event.results[0][0].transcript;
+            document.getElementById('userAnswer').value = userAnswer;
+    
+            const question = document.getElementById('questionText').textContent;
+    
+            // Stop recognition before processing answer
+            recognition.stop();  
+    
+            fetch('/answer', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ course: course, level: level })
+                body: JSON.stringify({ question: question, answer: userAnswer })
             })
-            .then(response => response.json())
-            .then(data => {  
-                const questions = data.questions;
-                let questionIndex = 0;
-                console.log("questions =", data.questions, questions[questionIndex])
-                
-                function showNextQuestion() {
-                    if (questionIndex < questions.length) {
-                        document.getElementById("questionText").textContent = questions[questionIndex];
-                        speakText(questions[questionIndex]);
-                        questionIndex++;
-                    } else {
-                        document.getElementById("questionText").textContent = "No more questions.";
-                    }
-                }
-        
-                showNextQuestion();
-        
-                // Optionally, you could add a button to show the next question:
-                document.getElementById("nextQuestion").addEventListener("click", showNextQuestion);
+            .then((response) => response.json())
+            .then((data) => {
+                const feedback = data.feedback;
+                document.getElementById('feedback').textContent = feedback;
+                document.getElementById('feedback').style.display = 'block';
+    
+                // Speak the correct answer feedback
+                speakText(feedback);
+    
+                // Hide instruction after getting answer
+                speakInstruction.style.display = 'none';
+            })
+            .catch((error) => {
+                console.error('Error submitting answer:', error);
             });
-        });
-
-        document.getElementById("checkAnswer").addEventListener("click", function() {
-            // Start voice recognition to take user answer
-            recognition.start();
-
-            recognition.onresult = function(event) {
-                const userAnswer = event.results[0][0].transcript;
-                document.getElementById("userAnswer").value = userAnswer;
-                
-                const question = document.getElementById("questionText").textContent;
-                
-                fetch("/answer", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ question: question, answer: userAnswer })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const feedback = data.feedback;
-                    document.getElementById("feedback").textContent = feedback;
-                    document.getElementById("feedback").style.display = "block";
-                });
-            };
-
-            recognition.onerror = function(event) {
-                alert('Error occurred in recognition: ' + event.error);
-            };
-        });
+        };
+    
+        recognition.onerror = function (event) {
+            alert('Error occurred in recognition: ' + event.error);
+        };
+    });
+    
     </script>
-</body>
+  </body>
 </html>
