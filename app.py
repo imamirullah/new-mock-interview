@@ -4,7 +4,7 @@ import google.generativeai as genai
 app = Flask(__name__)
 
 # Gemini API Key (Replace with your own API Key)
-genai.configure(api_key="AIzaSyDUQj0Hepp3-UYemo6ljvj7Hfmtdub3W6Q")
+genai.configure(api_key="AIzaSyC99R1OssC4kyL16IDCYzTyHq87A0KThUM")
 
 # Initialize Speech Recognition
 model = genai.GenerativeModel("gemini-1.5-flash")
@@ -13,7 +13,7 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 def generate_question(course, level, num_questions):
     questions = []
     for i in range(num_questions):
-        prompt = f"Generate a {level} interview level question for {course}."
+        prompt = f"Generate a {level} interview level question for {course}.Please don't provide those question which have list and also don't provide same and same question again."
         response = model.generate_content(prompt)
         questions.append(response.text)
         print("question", questions)
@@ -40,22 +40,23 @@ def quiz():
     if level == "beginner":
         num_questions = 10
     elif level == "intermediate":
-        num_questions = 15  # Increase by 5 for intermediate
+        num_questions = 15    #  Increase by 5 for intermediate
     elif level == "advanced":
-        num_questions = 20  # Increase by 5 for advanced
+        num_questions = 20    # Increase by 5 for advanced
     else:
-        num_questions = 10  # Default to 10 if level is not defined
+        num_questions = 10    # Default to 10 if level is not defined
     
     questions = generate_question(course, level, num_questions)
     return jsonify({"questions": questions})
 
-@app.route("/answer", methods=["POST"])
+@app.route("/answer", methods=["POST"]) 
 def answer():
     data = request.json
     question = data.get("question")
     user_answer = data.get("answer")
     feedback = check_answer(question, user_answer)
     return jsonify({"feedback": feedback})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
