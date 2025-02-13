@@ -1,5 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for,session
 import google.generativeai as genai
+from flask_pymongo import PyMongo
+from flask_bcrypt import Bcrypt
+import certifi
 
 app = Flask(__name__)
 
@@ -8,6 +11,77 @@ genai.configure(api_key="AIzaSyC99R1OssC4kyL16IDCYzTyHq87A0KThUM")
 
 # Initialize Speech Recognition
 model = genai.GenerativeModel("gemini-1.5-flash")
+
+
+
+app.config["MONGO_URI"] = "mongodb+srv://amiruncodemy:fhievPdPS0IkYRKD@cluster0.cqkwj.mongodb.net/user-data?retryWrites=true&w=majority"
+mongo = PyMongo(app, tlsCAFile=certifi.where())
+
+print("Connecting to MongoDB...")
+mongo = PyMongo(app)  # Initialize PyMongo
+bcrypt = Bcrypt(app)
+
+# Ensure the database connection is available before using it
+if mongo.db is None:
+    print("Failed to connect to MongoDB.")
+else:
+    print("MongoDB Connected Successfully!")
+
+# Define users collection **after** initializing mongo
+users_collection = mongo.db.users  
+
+
+
+@app.route('/signup', methods=['POST'])
+def signup():
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    phone = data.get('phone')
+    password = data.get('password')
+
+    if users_collection.find_one({"$or" : [{"email": email, "phone": phone}]}):
+        return jsonify({"error": "User already registered"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    users_collection.insert_one({
+        "username": username,
+        "email": email,
+        "phone": phone,
+        "password": hashed_password
+    })
+
+    return jsonify({"message": "User registered successfully"}), 201
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+
+    user = users_collection.find_one({"email": email })
+
+    if user and bcrypt.check_password_hash(user['password'], password):
+        return jsonify({"redirect": url_for('app_page')})  # ✅ Return redirect URL in JSON
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
+
+
+ 
+
+ 
+app.secret_key = "sdfghjklfghjfghj"  # Required for session handling
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user', None)  # Remove user session
+    return jsonify({"message": "Logged out successfully"})
+
+
+
+
 
 # Function to generate AI questions
 def generate_question(course, level, num_questions):
@@ -25,9 +99,20 @@ def check_answer(question, user_answer):
     response = model.generate_content(prompt)
     return response.text
 
-@app.route("/")
+# @app.route("/")
+# def home():
+#     return render_template("app.html")
+
+@app.route('/')
 def home():
-    return render_template("app.html")
+    return render_template('index.html')
+
+
+
+@app.route('/app')
+def app_page():
+    return render_template('app.html')
+
 
 @app.route("/quiz", methods=["POST"])
 def quiz():
