@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .question-container, .answer-container {
+            margin-top: 30px;
+        }
+        .question-container p, .answer-container p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mock Interview</h1>
+
+        <div class="form-group">
+            <label for="course">Course</label>
+            <select id="course">
+                <option value="Data Science">Data Science</option>
+                <option value="Software Testing">Software Testing</option>
+                <option value="Full Stack">Full Stack</option>
+                <option value="Python">Python</option>
+                <option value="Java">Java</option>
+                <option value="MERN Stack">MERN Stack</option>
+                <option value="MEAN Stack">MEAN Stack</option>
+                <option value="Business Analyst">Business Analyst</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="level">Level</label>
+            <select id="level">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+            </select>
+        </div>
+
+        <button id="getQuestion">Start Interview</button>
+
+        <div class="question-container">
+            <p id="questionText"></p>
+        </div>
+
+        <div class="answer-container">
+            <div class="form-group">
+                <label for="userAnswer">Your Answer</label>
+                <input type="text" id="userAnswer" placeholder="Enter your answer here">
+            </div>
+            <button id="answerQuestion" style="display: inline-block;">Answer Question</button>
+            <button id="checkAnswer" style="display: none;">Check Answer</button>
+            <button id="nextQuestion" style="display: none;">Next Question</button>
+        </div>
+
+        <div id="feedback" class="feedback" style="display:none;"></div>
+    </div>
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // Speech Recognition Setup
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        // Speech Synthesis Setup (Female Voice)
+        const synth = window.speechSynthesis;
+        const voices = synth.getVoices();
+        let femaleVoice = voices.find(voice => voice.name.includes('female')) || voices[0];
+
+        function speakText(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = femaleVoice;
+            synth.speak(utterance);
+        }
+
+        let userAnswers = [];
+        let correctAnswers = 0;
+        let questionIndex = 0;
+        let questions = [];
+
+        document.getElementById("getQuestion").addEventListener("click", function() {
+            const course = document.getElementById("course").value;
+            const level = document.getElementById("level").value;
+            
+            fetch("/quiz", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ course: course, level: level })
+            })
+            .then(response => response.json())
+            .then(data => {
+                questions = data.questions;
+                questionIndex = 0;
+                showNextQuestion();
+            });
+        });
+
+        function showNextQuestion() {
+            if (questionIndex < questions.length) {
+                const question = questions[questionIndex];
+                document.getElementById("questionText").textContent = question;
+                speakText(question);
+                document.getElementById("answerQuestion").style.display = "inline-block";
+                document.getElementById("checkAnswer").style.display = "inline-block";
+                questionIndex++;
+            } else {
+                document.getElementById("questionText").textContent = "Quiz Over!";
+                document.getElementById("answerQuestion").style.display = "none";
+                document.getElementById("checkAnswer").style.display = "none";
+                document.getElementById("nextQuestion").style.display = "none";
+                generatePDF();
+            }
+        }
+
+        document.getElementById("answerQuestion").addEventListener("click", function() {
+            recognition.start();
+            recognition.onresult = function(event) {
+                const userAnswer = event.results[0][0].transcript;
+                document.getElementById("userAnswer").value = userAnswer;
+            };
+
+            recognition.onerror = function(event) {
+                alert('Error occurred in recognition: ' + event.error);
+            };
+        });
+
+        document.getElementById("checkAnswer").addEventListener("click", function() {
+            console.log("check answer")
+            const userAnswer = document.getElementById("userAnswer").value;
+            const correctAnswer = questions[questionIndex - 1].answer;
+            const feedbackElement = document.getElementById("feedback");
+
+            // Store the user's answer and check if it's correct
+            userAnswers.push({ question: questions[questionIndex - 1].question, answer: userAnswer, correct: userAnswer.toLowerCase() === correctAnswer.toLowerCase() });
+            
+            // Update the correct answer count
+            console.log("user answer:", userAnswer)
+            console.log("correct answer:", correctAnswer)
+
+            if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                correctAnswers++;
+            }
+
+            // Provide feedback to the user
+            const feedbackText = userAnswer.toLowerCase() === correctAnswer.toLowerCase()
+                ? "Great! Your answer is correct."
+                : `Oops! The correct answer is: '${correctAnswer}'.`;
+
+            feedbackElement.textContent = feedbackText;
+            feedbackElement.style.display = "block";
+
+            // Show Next Question Button
+            document.getElementById("nextQuestion").style.display = "inline-block";
+            document.getElementById("checkAnswer").style.display = "none";
+            document.getElementById("answerQuestion").style.display = "none";
+        });
+
+        document.getElementById("nextQuestion").addEventListener("click", showNextQuestion);
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let y = 10;
+
+            doc.setFont("helvetica", "normal");
+            doc.text("AI Quiz Report", 10, y);
+            y += 10;
+            
+            userAnswers.forEach((answer, index) => {
+                doc.text(`Q${index + 1}: ${answer.question}`, 10, y);
+                y += 10;
+                doc.text(`Your Answer: ${answer.answer}`, 10, y);
+                y += 10;
+                doc.text(`Correct Answer: ${answer.correct ? answer.answer : "Incorrect"}`, 10, y);
+                y += 10;
+            });
+
+            const percentage = (correctAnswers / userAnswers.length) * 100;
+            doc.text(`Your Score: ${correctAnswers} / ${userAnswers.length} (${percentage.toFixed(2)}%)`, 10, y);
+            doc.save("quiz_report.pdf");
+        }
+    </script>
+</body>
+</html>

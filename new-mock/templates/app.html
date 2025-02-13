@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mock Interview</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style></style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="left" id="left">
+        <div class="image" id="img"></div>
+      </div>
+      <div class="right" id="right">
+
+        <button style="display: none; justify-content: end; width: 6vw; margin: 10px 20px;" id="logout-btn">Logout</button>
+        <div class="right-card" id="right-card">
+        <div id="heading">
+          <!-- <h1>Choose Technology & Level</h1> -->
+          
+        </div>
+
+        <div class="course-choice">
+          <div>
+            <div class="form-group" id="form-group">
+              <label for="course">Course</label>
+              <select id="course">
+                <option value="Data Science">Data Science</option>
+                <option value="Software Testing">Software Testing</option>
+                <option value="Full Stack">Full Stack</option>
+                <option value="Python">Python</option>
+                <option value="Java">Java</option>
+                <option value="Digital Marketing">Digital Marketing</option>
+                <option value="MERN Stack">MERN Stack</option>
+                <option value="MEAN Stack">MEAN Stack</option>
+                <option value="Business Analyst">Business Analyst</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="form-group">
+              <label for="level">Level</label>
+              <select id="level">
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <button class="start-btn" id="start" style="display: block;" onclick="startVideo()">Start Interview</button>
+          </div>
+        </div>
+        </div>
+
+        
+
+        <div class="container">
+          <div class="video-container" id="videoContainer">
+            <div style="display: flex; flex-direction: column; justify-content: center; ">
+              <div>
+                <video id="cameraFeed" autoplay></video>
+              </div>
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center; font-size: 10px;">
+                  <input type="checkbox" name="" id="" />Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                </div>
+                <button class="continue-btn" id="getQuestion" style="display: none;" onclick="moveVideo()">Start Interview</button>
+              </div>
+            </div>
+          </div>
+          
+
+          <div class="question-container">
+            <div id="loader" style="display: none;">Loading...</div>
+            <p id="questionText" style="display: none;"></p>
+          </div>
+
+          <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px; gap: 30px;">
+            
+            <button id="nextQuestion" style="display: none;">Next Question</button>
+          </div>
+          
+
+          <div class="answer-container" id="anser" style="display: none;">
+            <div class="form-group">
+              <p id="speakInstruction" style="display: none; text-align: center; font-weight: bold; color: red;"></p>
+              <div class="div" style="display: flex; gap: 20px;">
+                <span id="checkAnswer" style="display: none; cursor: pointer;"><img style="width: 5vw;" src="../static/images/mic2.png" alt=""></span>
+                <input type="text" id="userAnswer" placeholder="Please Click on mic to record your answer" />
+              </div>
+            </div>
+          </div>
+          <div id="feedback" class="feedback" style="display:none;"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.getElementById('logout-btn').addEventListener('click', async function () {
+        let response = await fetch('http://127.0.0.1:5000/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })  
+      
+        let result = await response.json()
+        alert(result.message)
+      
+        window.location.href = '/'
+      })
+    </script>
+    <script src="/static/script.js"></script>
+  </body>
+</html>
